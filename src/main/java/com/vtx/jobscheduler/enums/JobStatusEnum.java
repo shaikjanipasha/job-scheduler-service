@@ -1,6 +1,7 @@
 package com.vtx.jobscheduler.enums;
 
 public enum JobStatusEnum {
+    CREATED("created", "Job is created"),
     READY("ready", "Job is ready to be scheduling"),
     SCHEDULED("scheduled", "Job is scheduled"),
     RUNNING("running", "Job is running"),

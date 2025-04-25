@@ -37,7 +37,10 @@ dependencies {
 
 	// for hibernate JdbcSqlTypes json support
 	implementation "org.hibernate.orm:hibernate-core:${hibernateVersion}"
-  
+
+	//for swagger/openapi
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${swaggerVersion}"
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	compileOnly 'org.projectlombok:lombok'

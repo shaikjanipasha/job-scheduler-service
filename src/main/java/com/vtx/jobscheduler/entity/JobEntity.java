@@ -35,8 +35,8 @@ public class JobEntity extends BaseEntity<Long> {
     @Column(name = "cron_expression", nullable = false)
     private String cronExpression;
 
-    @Column(name = "fixed_rate", nullable = false)
-    private Long fixedRate;
+    @Column(name = "fixed_rate_ms", nullable = false)
+    private Long fixedRateInMilliseconds;
 
     @Column(name = "retry_policy", nullable = false)
     private String retryPolicy;
