@@ -8,6 +8,7 @@ import java.time.ZonedDateTime;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JobResponseContract extends Contract {
+    private Long id;
     private ZonedDateTime lastRunAt;
     private ZonedDateTime nextRunAt;
     private ZonedDateTime createdAt;

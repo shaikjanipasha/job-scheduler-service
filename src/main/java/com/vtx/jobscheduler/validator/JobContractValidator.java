@@ -33,7 +33,11 @@ public class JobContractValidator implements ConstraintValidator<ValidJobContrac
                 return false;
             }
 
-            if (!CronExpression.isValidExpression(value.getCronExpression())) {
+            String cronExpression = value.getCronExpression();
+            if (cronExpression.split(" ").length == 5) {
+                cronExpression += " *"; // Add the year field, spring scheduler/quartz cron requires 6 fields
+            }
+            if (!CronExpression.isValidExpression(cronExpression)) {
                 context.buildConstraintViolationWithTemplate(CRON_EXPRESSION
                                 + " is not a valid cron expression")
                         .addPropertyNode(CRON_EXPRESSION)
