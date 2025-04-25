@@ -25,7 +25,11 @@ dependencies {
 	//for postgresql driver
 	implementation "org.postgresql:postgresql:${postgresqlVersion}"
 
-	// logging Slf4j
+	// for liquibase to handle the DB deployment
+	implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
+	implementation "net.lbruun.springboot:preliquibase-spring-boot-starter:${preliquibaseVersion}"
+
+	// for logging Slf4j
 	implementation 'org.springframework.boot:spring-boot-starter-logging'
 	//implementation 'org.springframework.boot:spring-boot-starter-validation'
 	//implementation 'org.springframework.boot:spring-boot-starter-security'
