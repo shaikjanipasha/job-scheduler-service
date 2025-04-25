@@ -1,0 +1,44 @@
+server:
+    port: 8083
+    max-http-header-size: 10MB
+spring:
+    application:
+        name: job-scheduler-service
+
+postgresSchema: jobschedulerservice
+postgresConnectionString: jdbc:postgresql://localhost:5432/postgres?currentSchema=${postgresSchema}
+postgresUsername: postgres
+postgresPassword: admin
+
+---
+spring:
+    datasource:
+        url: ${postgresConnectionString}
+        username: ${postgresUsername}
+        password: ${postgresPassword}
+        driver-class-name: org.postgresql.Driver
+        hikari:
+            auto-commit: false
+            schema: ${postgresSchema}
+            poolName: HikariPool-1
+            maximum-pool-size: 10
+            minimum-idle: 10
+            idle-timeout: 600000
+            max-lifetime: 1800000
+            connection-timeout: 30000
+    jpa:
+        properties:
+            jadira:
+                usertype:
+                    autoRegisterUserTypes: true
+            hibernate:
+                default_schema: ${postgresSchema}
+                order_inserts: true
+                jdbc:
+                    batch_size: 10
+                hbm2ddl:
+                    auto: none
+                show_sql: true
+
+
+
