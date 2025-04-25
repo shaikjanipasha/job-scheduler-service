@@ -51,6 +51,6 @@ public class JobEntity extends BaseEntity<Long> {
     private ZonedDateTime nextRunAt;
 
     @Version
-    private Integer version;
+    private Integer version; // This field is used for optimistic locking
 
 }
