@@ -2,8 +2,7 @@ package com.vtx.jobscheduler.enums;
 
 public enum ScheduleTypeEnum {
     CRON("cron", "Cron expression for scheduling"),
-    FIXED_RATE("fixed_rate", "Fixed rate scheduling"),
-    UNKNOWN("unknown", "Unknown scheduling type");
+    FIXED_RATE("fixed_rate", "Fixed rate scheduling");
 
     private final String value;
     private final String description;
@@ -24,5 +23,13 @@ public enum ScheduleTypeEnum {
             }
         }
         throw new IllegalArgumentException("Unknown schedule type: " + value);
+    }
+
+    public static boolean isCron(ScheduleTypeEnum type) {
+        return type == CRON;
+    }
+
+    public static boolean isFixedRate(ScheduleTypeEnum type) {
+        return type == FIXED_RATE;
     }
 }
