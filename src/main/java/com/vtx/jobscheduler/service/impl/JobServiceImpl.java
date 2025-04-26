@@ -2,6 +2,7 @@ package com.vtx.jobscheduler.service.impl;
 
 import com.vtx.jobscheduler.JobContractMapper;
 import com.vtx.jobscheduler.entity.JobEntity;
+import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
 import com.vtx.jobscheduler.model.JobRequestContract;
 import com.vtx.jobscheduler.model.JobResponseContract;
 import com.vtx.jobscheduler.repository.JobRepository;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -31,7 +33,12 @@ public class JobServiceImpl implements JobService {
             return jobContractMapper.translateToJobResponseContract(optJobEntity.get());
         }
 
-        ZonedDateTime nextRunAt = calculateNextRun(jobRequestContract.getCronExpression());
+        ZonedDateTime nextRunAt = null;
+        if (jobRequestContract.getScheduleType() == ScheduleTypeEnum.CRON) {
+            nextRunAt = calculateNextRun(jobRequestContract.getCronExpression());
+        } else if (jobRequestContract.getScheduleType() == ScheduleTypeEnum.FIXED_RATE) {
+            nextRunAt = ZonedDateTime.now().plus(Duration.ofMillis(jobRequestContract.getFixedRateInMilliSeconds()));
+        }
         JobEntity jobEntity = jobContractMapper.translateToJobEntity(jobRequestContract);
         jobEntity.setNextRunAt(nextRunAt);
         jobEntity.setCreatedAt(ZonedDateTime.now());
