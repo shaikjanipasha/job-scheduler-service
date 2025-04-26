@@ -3,3 +3,6 @@ spring:
         active: dev
     application:
         name: job-scheduler-service
+jwt:
+    secretKey:  dGhpcyBpcyBhIHNlY3VyZSBkZWNpc2lvbiBrZXkgdGhhdCBpcyBzZWN1cmU=
+    expiration: 3600000

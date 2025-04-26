@@ -10,6 +10,10 @@ public interface JobService {
 
     JobResponseContract createJob(JobRequestContract jobRequestContract);
 
+    JobResponseContract getJobByName(String name);
+
+    JobResponseContract getJobById(Long id);
+
 /*
     JobEntity updateJob(Long id, JobEntity jobEntity);
 
@@ -17,7 +21,7 @@ public interface JobService {
 
     Page<JobEntity> getAllJobs(Pageable pageable);
 
-    JobEntity getJobById(Long id);
+
 
     JobEntity getJobByName(String name); */
 }

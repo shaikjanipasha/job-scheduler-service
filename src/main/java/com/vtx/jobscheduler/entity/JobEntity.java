@@ -21,24 +21,24 @@ import org.hibernate.type.SqlTypes;
 @Entity(name = "job")
 public class JobEntity extends BaseEntity<Long> {
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name")
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private JobStatusEnum status;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "schedule_type", nullable = false)
+    @Column(name = "schedule_type")
     private ScheduleTypeEnum scheduleType;
 
-    @Column(name = "cron_expression", nullable = false)
+    @Column(name = "cron_expression")
     private String cronExpression;
 
-    @Column(name = "fixed_rate_ms", nullable = false)
+    @Column(name = "fixed_rate_ms")
     private Long fixedRateInMilliseconds;
 
-    @Column(name = "retry_policy", nullable = false)
+    @Column(name = "retry_policy")
     private String retryPolicy;
 
     @JdbcTypeCode(SqlTypes.JSON)
