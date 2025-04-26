@@ -26,8 +26,8 @@ public class JobServiceImpl implements JobService {
     public JobResponseContract createJob(JobRequestContract jobRequestContract) {
         Optional<JobEntity> optJobEntity = jobRepository.findByName(jobRequestContract.getName());
         if (optJobEntity.isPresent()) {
-            // Idempotency handled
-            // Even though POST call triggered many times always returns the same response
+            // Note:: Idempotency handled
+            // Even though POST call triggered many times always returns the same response for same job name
             return jobContractMapper.translateToJobResponseContract(optJobEntity.get());
         }
 
@@ -41,6 +41,20 @@ public class JobServiceImpl implements JobService {
 
         JobEntity savedJobEntity = jobRepository.save(jobEntity);
         return jobContractMapper.translateToJobResponseContract(savedJobEntity);
+    }
+
+    @Override
+    public JobResponseContract getJobByName(String jobName) {
+        JobEntity jobEntity = jobRepository.findByName(jobName)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+        return jobContractMapper.translateToJobResponseContract(jobEntity);
+    }
+
+    @Override
+    public JobResponseContract getJobById(Long jobId) {
+        JobEntity jobEntity = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+        return jobContractMapper.translateToJobResponseContract(jobEntity);
     }
 
     private ZonedDateTime calculateNextRun(String cronExpr) {
