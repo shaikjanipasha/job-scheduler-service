@@ -46,8 +46,9 @@ spring:
         default-schema: ${postgresSchema}
         parameters:
             db_schema: ${postgresSchema}
-encryption:
-    secretKey:${SECRET_KEY: 7232416827}
+jwt:
+    secretKey: dGhpcyBpcyBhIHNlY3VyZSBkZWNpc2lvbiBrZXkgdGhhdCBpcyBzZWN1cmU=
+    expiration: 3600000
 
 
 
