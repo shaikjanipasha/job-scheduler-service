@@ -45,7 +45,7 @@ public class DistributedSchedulerLockServiceImpl implements DistributedScheduler
         }
 
         log.info("Lock is already acquired by another process: {}", lockKey);
-        return true;
+        return false;
     }
 
     @Override

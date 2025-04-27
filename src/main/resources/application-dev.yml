@@ -4,7 +4,7 @@ server:
 spring:
     application:
         name: job-scheduler-service
-
+## ideally sensitive information should come from Key Vault or AWS Secrets Manager
 postgresSchema: jobschedulerservice
 postgresConnectionString: jdbc:postgresql://localhost:5432/postgres?currentSchema=${postgresSchema}
 postgresUsername: postgres
@@ -57,5 +57,8 @@ scheduler:
         expiryTimeInMinutes: 30
 
 
+logging:
+    pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg [jobId:%X{jobId} jobName:%X{jobName}]"
 
 

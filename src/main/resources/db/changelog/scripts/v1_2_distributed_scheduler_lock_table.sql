@@ -7,3 +7,5 @@ CREATE TABLE IF NOT EXISTS jobschedulerservice.distributed_scheduler_lock (
     expiry_time TIMESTAMP WITH TIME ZONE,
     last_heartbeat_time TIMESTAMP WITH TIME ZONE
 );
+
+

@@ -1,4 +1,4 @@
-package com.vtx.jobscheduler;
+package com.vtx.jobscheduler.mapper;
 
 import com.vtx.jobscheduler.entity.JobEntity;
 import com.vtx.jobscheduler.enums.JobStatusEnum;

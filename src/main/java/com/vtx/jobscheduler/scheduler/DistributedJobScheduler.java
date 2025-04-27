@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +31,6 @@ public class DistributedJobScheduler {
         log.info("Start --> DistributedJobSchedulerService started at: {} ", System.currentTimeMillis());
 
         try {
-            if (distributedSchedulerLockService.tryAcquireLock(DISTRIBUTED_JOB_SCHEDULER_LOCK)) {
-                log.info(DISTRIBUTED_JOB_SCHEDULER_LOCK + " acquired");
-
                 List<String> statuses = List.of(JobStatusEnum.CREATED.getValue(), JobStatusEnum.SCHEDULED.getValue());
                 List<JobEntity> jobsToProcess = jobService.findJobsToProcess(statuses, ZonedDateTime.now());
                 if (jobsToProcess.isEmpty()) {
@@ -41,19 +39,19 @@ public class DistributedJobScheduler {
                 }
                 log.info("Found {} jobs to process", jobsToProcess.size());
                 for (JobEntity job: jobsToProcess) {
-                    processJob(job);
+                    String lockName = DISTRIBUTED_JOB_SCHEDULER_LOCK + job.getName();
+                    if (distributedSchedulerLockService.tryAcquireLock(
+                            DISTRIBUTED_JOB_SCHEDULER_LOCK + job.getName())) {
+                        log.info(lockName + " Acquired lock for job: {}", job.getName());
+                        processJob(job);
+                    } else {
+                        log.info(lockName + " Another instance is already processing job: {}", job.getName());
+                    }
+                    distributedSchedulerLockService.releaseLock(lockName);
                 }
-            } else {
-                log.info( DISTRIBUTED_JOB_SCHEDULER_LOCK + " Another instance is already processing jobs, "
-                        + "skipping this execution.");
-                return;
-            }
-            log.info("All jobs processed successfully");
-        } catch (Exception e) {
+            MDC.clear();
+            } catch (Exception e) {
             log.error("DistributedJobSchedulerService Error occurred while processing jobs: {}", e.getMessage(), e);
-        } finally {
-            distributedSchedulerLockService.releaseLock(DISTRIBUTED_JOB_SCHEDULER_LOCK);
-            log.info(DISTRIBUTED_JOB_SCHEDULER_LOCK + " released");
         }
         log.info("End --> DistributedJobSchedulerService end at: {} ", System.currentTimeMillis());
     }

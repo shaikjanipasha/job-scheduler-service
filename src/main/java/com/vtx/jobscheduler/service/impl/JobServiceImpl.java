@@ -1,6 +1,6 @@
 package com.vtx.jobscheduler.service.impl;
 
-import com.vtx.jobscheduler.JobContractMapper;
+import com.vtx.jobscheduler.mapper.JobContractMapper;
 import com.vtx.jobscheduler.entity.JobEntity;
 import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
 import com.vtx.jobscheduler.model.JobRequestContract;
