@@ -50,6 +50,12 @@ jwt:
     secretKey: dGhpcyBpcyBhIHNlY3VyZSBkZWNpc2lvbiBrZXkgdGhhdCBpcyBzZWN1cmU=
     expiration: 3600000
 
+scheduler:
+    fixedRate: 600000
+    initialDelay: 300000
+    lock:
+        expiryTimeInMinutes: 30
+
 
 
 

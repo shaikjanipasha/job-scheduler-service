@@ -6,3 +6,4 @@ spring:
 jwt:
     secretKey:  dGhpcyBpcyBhIHNlY3VyZSBkZWNpc2lvbiBrZXkgdGhhdCBpcyBzZWN1cmU=
     expiration: 3600000
+

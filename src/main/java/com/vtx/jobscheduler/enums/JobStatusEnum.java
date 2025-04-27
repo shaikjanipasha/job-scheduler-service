@@ -1,16 +1,15 @@
 package com.vtx.jobscheduler.enums;
 
 public enum JobStatusEnum {
-    CREATED("created", "Job is created"),
-    READY("ready", "Job is ready to be scheduling"),
-    SCHEDULED("scheduled", "Job is scheduled"),
-    RUNNING("running", "Job is running"),
-    PAUSED("paused", "Job is paused"),
-    RESUMED("resumed", "Job has resumed"),
-    COMPLETED("completed", "Job has completed"),
-    FAILED("failed", "Job has failed"),
-    CANCELLED("cancelled", "Job has been cancelled"),
-    ERROR("error", "Job has encountered an error");
+    CREATED("CREATED", "Job is created"),
+    SCHEDULED("SCHEDULED", "Job is scheduled"),
+    RUNNING("RUNNING", "Job is running"),
+    RETRYING("RETRYING", "Job is retrying"),
+    FAILED("FAILED", "Job has failed"),
+    COMPLETED("COMPLETED", "Job has completed"),
+    PAUSED("PAUSED", "Job is paused"),
+    CANCELLED("CANCELLED", "Job has been cancelled"),
+    ERROR("ERROR", "Job has encountered an error");
 
     private final String value;
     private final String description;

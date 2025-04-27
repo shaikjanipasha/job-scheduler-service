@@ -1,11 +1,18 @@
 package com.vtx.jobscheduler.entity;
 
+import static com.vtx.jobscheduler.constants.Constants.SYSTEM_USER;
 import static com.vtx.jobscheduler.constants.Constants.UTC_TIME_ZONE;
 
 import java.time.ZonedDateTime;
 import java.util.TimeZone;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,16 +41,15 @@ public abstract class BaseEntity<T> {
     protected void onCreate() {
         TimeZone timeZone = TimeZone.getTimeZone(UTC_TIME_ZONE);
         this.createdAt = ZonedDateTime.now();
-        // ToDo:: use context holder to update the userId createdBy
-        this.createdBy = "system"; // placeholder for current user
+        this.createdBy = SYSTEM_USER; // TODO: replace with actual user
     }
 
     @PreUpdate
     protected void onUpdate() {
         TimeZone timeZone = TimeZone.getTimeZone(UTC_TIME_ZONE);
         this.updatedAt = ZonedDateTime.now();
-        // ToDo:: use context holder to update the userId updatedBy
-        this.updatedBy = "system"; // placeholder for currentuser
+        this.updatedBy = SYSTEM_USER; // TODO: replace with actual user
+
     }
 
 }
