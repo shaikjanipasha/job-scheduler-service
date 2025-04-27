@@ -1,5 +1,6 @@
 package com.vtx.jobscheduler.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class JobDetailsPayload {
     private String action;
-    Map<String, Object> params;
-    Map<String, Object> contexts;
+    Map<String, Object> params = new HashMap<>();
+    Map<String, Object> contexts = new HashMap<>();
 }

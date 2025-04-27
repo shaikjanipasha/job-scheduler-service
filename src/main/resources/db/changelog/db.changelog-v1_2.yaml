@@ -1,8 +1,8 @@
 databaseChangeLog:
   - changeSet:
-        id: "V1.1"
+        id: "V1.2"
         author: "Jani Pasha Shaik"
         changes:
             - sqlFile:
-                path: scripts/v1_1_create_job_table.sql
+                path: scripts/v1_2_distributed_scheduler_lock_table.sql
                 relativeToChangelogFile: true

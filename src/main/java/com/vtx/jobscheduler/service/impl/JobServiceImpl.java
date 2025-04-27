@@ -1,20 +1,23 @@
 package com.vtx.jobscheduler.service.impl;
 
-import com.vtx.jobscheduler.JobContractMapper;
+import com.vtx.jobscheduler.mapper.JobContractMapper;
 import com.vtx.jobscheduler.entity.JobEntity;
 import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
 import com.vtx.jobscheduler.model.JobRequestContract;
 import com.vtx.jobscheduler.model.JobResponseContract;
 import com.vtx.jobscheduler.repository.JobRepository;
 import com.vtx.jobscheduler.service.JobService;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.Optional;
+import static com.vtx.jobscheduler.constants.Constants.SYSTEM_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -33,18 +36,17 @@ public class JobServiceImpl implements JobService {
             return jobContractMapper.translateToJobResponseContract(optJobEntity.get());
         }
 
-        ZonedDateTime nextRunAt = null;
-        if (jobRequestContract.getScheduleType() == ScheduleTypeEnum.CRON) {
-            nextRunAt = calculateNextRun(jobRequestContract.getCronExpression());
-        } else if (jobRequestContract.getScheduleType() == ScheduleTypeEnum.FIXED_RATE) {
-            nextRunAt = ZonedDateTime.now().plus(Duration.ofMillis(jobRequestContract.getFixedRateInMilliSeconds()));
+        ZonedDateTime nextRunAt = calculateNextRun(jobRequestContract.getScheduleType(),
+                jobRequestContract.getCronExpression(), jobRequestContract.getFixedRateInMilliSeconds());
+        if (nextRunAt == null) {
+            throw new RuntimeException("Invalid schedule type or cron expression");
         }
         JobEntity jobEntity = jobContractMapper.translateToJobEntity(jobRequestContract);
         jobEntity.setNextRunAt(nextRunAt);
         jobEntity.setCreatedAt(ZonedDateTime.now());
         jobEntity.setUpdatedAt(ZonedDateTime.now());
-        jobEntity.setCreatedBy("system"); // TODO: replace with actual user
-        jobEntity.setUpdatedBy("system"); // TODO: replace with actual user
+        jobEntity.setCreatedBy(SYSTEM_USER); // TODO: replace with actual user
+        jobEntity.setUpdatedBy(SYSTEM_USER); // TODO: replace with actual user
 
         JobEntity savedJobEntity = jobRepository.save(jobEntity);
         return jobContractMapper.translateToJobResponseContract(savedJobEntity);
@@ -64,11 +66,30 @@ public class JobServiceImpl implements JobService {
         return jobContractMapper.translateToJobResponseContract(jobEntity);
     }
 
-    private ZonedDateTime calculateNextRun(String cronExpr) {
-        CronExpression cronExpression = CronExpression.parse(cronExpr);
-        ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime nextRunAt = cronExpression.next(now);
-        return nextRunAt;
+    @Override
+    public List<JobEntity> findJobsToProcess(List<String> statuses, ZonedDateTime currentTime) {
+        return jobRepository.findJobsToProcess(statuses, currentTime);
+    }
+
+    @Override
+    @Transactional
+    public void updateJob(JobEntity jobEntity) {
+        jobEntity.setUpdatedAt(ZonedDateTime.now());
+        jobEntity.setUpdatedBy(SYSTEM_USER); // TODO: replace with actual user
+        jobRepository.save(jobEntity);
+    }
+
+    @Override
+    public ZonedDateTime calculateNextRun(ScheduleTypeEnum scheduleType, String cronExpression,
+                                          Long fixedRateInMilliSeconds) {
+        if (scheduleType == ScheduleTypeEnum.CRON) {
+            CronExpression cronExpressionResult = CronExpression.parse(cronExpression);
+            ZonedDateTime now = ZonedDateTime.now();
+            return cronExpressionResult.next(now);
+        } else if (scheduleType == ScheduleTypeEnum.FIXED_RATE) {
+            return ZonedDateTime.now().plus(Duration.ofMillis(fixedRateInMilliSeconds));
+        }
+        return null;
     }
 
 }

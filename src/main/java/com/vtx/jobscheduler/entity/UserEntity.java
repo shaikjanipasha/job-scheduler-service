@@ -33,6 +33,6 @@ public class UserEntity extends BaseEntity<UUID> {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private RoleEnum role;
+    private RoleEnum role; // it supposed to be an array of roles come from application roles, but for now we will use a single role
 
 }
