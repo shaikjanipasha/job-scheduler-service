@@ -1,10 +1,6 @@
 package com.vtx.jobscheduler.constants;
 
 public final class Constants {
-    public static final String RETRY_DELAY_IN_SECONDS = "retryDelayInSeconds";
-    public static final String EXPONENTIAL_BASE = "exponentialBase";
-    public static final String EXPONENTIAL_INITIAL_DELAY_IN_SECONDS = "exponentialInitialDelayInSeconds";
-
     private Constants() {
     }
     public static final String UTC_TIME_ZONE = "UTC";
@@ -18,6 +14,8 @@ public final class Constants {
     public static final int RETRY_DELAY_IN_SECONDS_DEFAULT = 60;
     public static final int EXPONENTIAL_BASE_DEFAULT = 2;
     public static final int EXPONENTIAL_INITIAL_DELAY_IN_SECONDS_DEFAULT = 30;
-
+    public static final String RETRY_DELAY_IN_SECONDS = "retryDelayInSeconds";
+    public static final String EXPONENTIAL_BASE = "exponentialBase";
+    public static final String EXPONENTIAL_INITIAL_DELAY_IN_SECONDS = "exponentialInitialDelayInSeconds";
 
 }
