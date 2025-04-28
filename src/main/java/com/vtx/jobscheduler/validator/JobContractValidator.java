@@ -1,6 +1,7 @@
 package com.vtx.jobscheduler.validator;
 
 import com.vtx.jobscheduler.annotation.ValidJobContract;
+import com.vtx.jobscheduler.enums.RetryPolicyEnum;
 import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
 import com.vtx.jobscheduler.model.Contract;
 import io.micrometer.common.util.StringUtils;
@@ -51,6 +52,48 @@ public class JobContractValidator implements ConstraintValidator<ValidJobContrac
                             .addPropertyNode(FIXED_RATE_IN_MILLI_SECONDS)
                             .addConstraintViolation();
                 return false;
+            }
+        }
+
+        if (value.getRetryPolicy() == RetryPolicyEnum.NONE) {
+            return true;
+        } else {
+            if (value.getRetryPolicy() == RetryPolicyEnum.FIXED) {
+                if (value.getRetryDelayInSeconds() == null || value.getRetryDelayInSeconds() <= 0) {
+                    context.buildConstraintViolationWithTemplate(RETRY_DELAY_IN_SECONDS
+                                    + " must be > 0 for FIXED retry policy")
+                            .addPropertyNode(RETRY_DELAY_IN_SECONDS)
+                            .addConstraintViolation();
+                    return false;
+                }
+                if (value.getMaxRetries() == null || value.getMaxRetries() <= 0) {
+                    context.buildConstraintViolationWithTemplate("maxRetries must be > 0 for FIXED retry policy")
+                            .addPropertyNode("maxRetries")
+                            .addConstraintViolation();
+                    return false;
+                }
+            } else if (value.getRetryPolicy() == RetryPolicyEnum.EXPONENTIAL) {
+                if (value.getExponentialBase() == null || value.getExponentialBase() <= 1) {
+                    context.buildConstraintViolationWithTemplate(EXPONENTIAL_BASE
+                                    + " must be > 1 for EXPONENTIAL retry policy")
+                            .addPropertyNode(EXPONENTIAL_BASE)
+                            .addConstraintViolation();
+                    return false;
+                }
+                if (value.getExponentialInitialDelayInSeconds() == null || value.getExponentialInitialDelayInSeconds() <= 0) {
+                    context.buildConstraintViolationWithTemplate(EXPONENTIAL_INITIAL_DELAY_IN_SECONDS
+                                    + " must be > 0 for EXPONENTIAL retry policy")
+                            .addPropertyNode(EXPONENTIAL_INITIAL_DELAY_IN_SECONDS)
+                            .addConstraintViolation();
+                    return false;
+                }
+
+                if (value.getMaxRetries() == null || value.getMaxRetries() <= 0) {
+                    context.buildConstraintViolationWithTemplate("maxRetries must be > 0 for EXPONENTIAL retry policy")
+                            .addPropertyNode("maxRetries")
+                            .addConstraintViolation();
+                    return false;
+                }
             }
         }
         return true;

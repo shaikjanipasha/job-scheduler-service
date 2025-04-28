@@ -2,8 +2,9 @@ package com.vtx.jobscheduler.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.vtx.jobscheduler.enums.JobStatusEnum;
+import com.vtx.jobscheduler.enums.RetryPolicyEnum;
 import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
-import jakarta.validation.Valid;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -21,8 +22,18 @@ public class Contract {
     private String cronExpression;
     private Long fixedRateInMilliSeconds;
 
-
-    private String retryPolicy;
+    private RetryPolicyEnum retryPolicy = RetryPolicyEnum.NONE;
 
     private JobDetailsPayload payload;
+
+    private Integer maxRetries = 3;
+
+    private Integer retryDelayInSeconds = 3;
+
+    private Integer exponentialBase = 2;
+
+    private Integer exponentialInitialDelayInSeconds = 3;
+
+    private Integer retriesAttempted = 0;
+
 }
