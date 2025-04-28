@@ -2,9 +2,12 @@ package com.vtx.jobscheduler.mapper;
 
 import com.vtx.jobscheduler.entity.JobEntity;
 import com.vtx.jobscheduler.enums.JobStatusEnum;
+import com.vtx.jobscheduler.model.JobPatchRequestContract;
 import com.vtx.jobscheduler.model.JobRequestContract;
 import com.vtx.jobscheduler.model.JobResponseContract;
 import org.springframework.stereotype.Component;
+
+import java.time.ZonedDateTime;
 
 @Component
 public class JobContractMapper {
@@ -53,5 +56,46 @@ public class JobContractMapper {
         jobResponseContract.setUpdatedAt(jobEntity.getUpdatedAt());
         jobResponseContract.setUpdatedBy(jobEntity.getUpdatedBy());
         return jobResponseContract;
+    }
+
+    public void mapPatchRequestToExistingJobEntity(JobEntity existingJobEntity,JobPatchRequestContract patchRequest) {
+
+        if (patchRequest.getStatus() == null) {
+            throw new IllegalArgumentException("status must be provided to patch a job");
+        }
+        existingJobEntity.setStatus(patchRequest.getStatus());
+
+        if (patchRequest.getScheduleType() != null) {
+            existingJobEntity.setScheduleType(patchRequest.getScheduleType());
+        }
+        if (patchRequest.getCronExpression() != null) {
+            existingJobEntity.setCronExpression(patchRequest.getCronExpression());
+        }
+        if (patchRequest.getFixedRateInMilliSeconds() != null) {
+            existingJobEntity.setFixedRateInMilliseconds(patchRequest.getFixedRateInMilliSeconds());
+        }
+        if (patchRequest.getRetryPolicy() != null) {
+            existingJobEntity.setRetryPolicy(patchRequest.getRetryPolicy());
+        }
+        if (patchRequest.getMaxRetries() != null) {
+            existingJobEntity.setMaxRetries(patchRequest.getMaxRetries());
+        }
+        if (patchRequest.getRetryDelayInSeconds() != null) {
+            existingJobEntity.setRetryDelayInSeconds(patchRequest.getRetryDelayInSeconds());
+        }
+        if (patchRequest.getExponentialBase() != null) {
+            existingJobEntity.setExponentialBase(patchRequest.getExponentialBase());
+        }
+        if (patchRequest.getExponentialInitialDelayInSeconds() != null) {
+            existingJobEntity.setExponentialInitialDelayInSeconds(patchRequest.getExponentialInitialDelayInSeconds());
+        }
+        if (patchRequest.getRetriesAttempted() != null) {
+            existingJobEntity.setRetriesAttempted(patchRequest.getRetriesAttempted());
+        }
+        if (patchRequest.getPayload() != null) {
+            existingJobEntity.setPayload(patchRequest.getPayload());
+        }
+        existingJobEntity.setUpdatedAt(ZonedDateTime.now());
+        existingJobEntity.setUpdatedBy(existingJobEntity.getUpdatedBy());
     }
 }

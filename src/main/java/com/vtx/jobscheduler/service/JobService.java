@@ -2,8 +2,11 @@ package com.vtx.jobscheduler.service;
 
 import com.vtx.jobscheduler.entity.JobEntity;
 import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
+import com.vtx.jobscheduler.model.JobPatchRequestContract;
 import com.vtx.jobscheduler.model.JobRequestContract;
 import com.vtx.jobscheduler.model.JobResponseContract;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -21,17 +24,6 @@ public interface JobService {
 
     public ZonedDateTime calculateNextRun(ScheduleTypeEnum scheduleType, String cronExpression,
                                           Long fixedRateInMilliSeconds);
-
-
-
-/*
-    JobEntity updateJob(Long id, JobEntity jobEntity);
-
-    void deleteJob(Long id);
-
-    Page<JobEntity> getAllJobs(Pageable pageable);
-
-
-
-    JobEntity getJobByName(String name); */
+    JobResponseContract patchJob(Long jobId, JobPatchRequestContract patchRequest);
+    Page<JobResponseContract> getAllJobs(Pageable pageable);
 }

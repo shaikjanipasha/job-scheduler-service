@@ -4,6 +4,7 @@ import com.vtx.jobscheduler.exception.JobNotFoundException;
 import com.vtx.jobscheduler.mapper.JobContractMapper;
 import com.vtx.jobscheduler.entity.JobEntity;
 import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
+import com.vtx.jobscheduler.model.JobPatchRequestContract;
 import com.vtx.jobscheduler.model.JobRequestContract;
 import com.vtx.jobscheduler.model.JobResponseContract;
 import com.vtx.jobscheduler.repository.JobRepository;
@@ -15,6 +16,8 @@ import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 
@@ -93,6 +96,30 @@ public class JobServiceImpl implements JobService {
             return ZonedDateTime.now().plus(Duration.ofMillis(fixedRateInMilliSeconds));
         }
         return null;
+    }
+
+    @Override
+    public JobResponseContract patchJob(Long jobId, JobPatchRequestContract patchRequest) {
+        // ToDo:: Validate Patch Request and handle mapping errors and return the result
+        Optional<JobEntity> optJobEntity = jobRepository.findById(jobId);
+        if (optJobEntity.isEmpty()) {
+            throw new JobNotFoundException(String
+                    .format("The given JobId %d is not found in the system. Please verify the JobId", jobId));
+        }
+
+        JobEntity existingJobEntity = optJobEntity.get();
+        jobContractMapper.mapPatchRequestToExistingJobEntity(existingJobEntity, patchRequest);
+        // now need validation on existing jobEntity :: ToDo::
+        ZonedDateTime nextRunAt = calculateNextRun(existingJobEntity.getScheduleType(),
+                existingJobEntity.getCronExpression(), existingJobEntity.getFixedRateInMilliseconds());
+        if (nextRunAt == null) {
+            throw new RuntimeException("Invalid schedule type or cron expression");
+        }
+        return null;
+    }
+    @Override
+    public Page<JobResponseContract> getAllJobs(Pageable pageable) {
+        return jobRepository.findAll(pageable).map(jobContractMapper::translateToJobResponseContract);
     }
 
 }

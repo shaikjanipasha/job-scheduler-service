@@ -28,7 +28,7 @@ public class DistributedJobScheduler {
     private final DistributedSchedulerLockService distributedSchedulerLockService;
 
     @Scheduled(fixedRateString = "${scheduler.fixedRate:6000}",
-            initialDelayString = "${job.scheduler.initialDelay:5000}")
+            initialDelayString = "${scheduler.initialDelay:5000}")
     public void processJobs() {
         log.info("Start --> DistributedJobSchedulerService started at: {} ", System.currentTimeMillis());
 
