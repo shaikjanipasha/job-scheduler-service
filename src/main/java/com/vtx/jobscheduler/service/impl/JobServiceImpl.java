@@ -1,5 +1,6 @@
 package com.vtx.jobscheduler.service.impl;
 
+import com.vtx.jobscheduler.exception.JobNotFoundException;
 import com.vtx.jobscheduler.mapper.JobContractMapper;
 import com.vtx.jobscheduler.entity.JobEntity;
 import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
@@ -55,14 +56,16 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobResponseContract getJobByName(String jobName) {
         JobEntity jobEntity = jobRepository.findByName(jobName)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() -> new JobNotFoundException(String
+                .format("The given JobName %s is not found in the system. Please verify the JobName", jobName)));
         return jobContractMapper.translateToJobResponseContract(jobEntity);
     }
 
     @Override
     public JobResponseContract getJobById(Long jobId) {
         JobEntity jobEntity = jobRepository.findById(jobId)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() -> new JobNotFoundException(String
+                        .format("The given JobId %d is not found in the system. Please verify the JobId", jobId)));
         return jobContractMapper.translateToJobResponseContract(jobEntity);
     }
 
