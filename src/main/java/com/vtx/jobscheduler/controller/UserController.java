@@ -1,6 +1,13 @@
 package com.vtx.jobscheduler.controller;
 
-import com.vtx.jobscheduler.model.*;
+import static com.vtx.jobscheduler.routes.Routes.ROUTE_USER;
+import static com.vtx.jobscheduler.routes.Routes.USER_LOGIN;
+import static com.vtx.jobscheduler.routes.Routes.USER_REGISTER;
+
+import com.vtx.jobscheduler.model.JwtResponse;
+import com.vtx.jobscheduler.model.LoginRequest;
+import com.vtx.jobscheduler.model.RegistrationRequestContract;
+import com.vtx.jobscheduler.model.UserDetailsDto;
 import com.vtx.jobscheduler.service.JwtService;
 import com.vtx.jobscheduler.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping(ROUTE_USER)
 @RequiredArgsConstructor
 public class UserController {
 
@@ -26,7 +33,7 @@ public class UserController {
     private final UserServiceImpl userService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @PostMapping("/register")
+    @PostMapping(USER_REGISTER)
     public ResponseEntity<String> registerUser(@RequestBody RegistrationRequestContract registrationRequest) {
         UserDetailsDto responseDto = userService.getUserDetailsByUserName(registrationRequest.getUsername());
         if (responseDto != null) {
@@ -40,7 +47,7 @@ public class UserController {
         return ResponseEntity.ok("User registered successfully.");
     }
 
-    @PostMapping("/login")
+    @PostMapping(USER_LOGIN)
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password())

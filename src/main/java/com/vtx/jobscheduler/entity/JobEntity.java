@@ -2,6 +2,7 @@ package com.vtx.jobscheduler.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.vtx.jobscheduler.enums.JobStatusEnum;
+import com.vtx.jobscheduler.enums.RetryPolicyEnum;
 import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
 import com.vtx.jobscheduler.model.JobDetailsPayload;
 import java.time.ZonedDateTime;
@@ -38,8 +39,9 @@ public class JobEntity extends BaseEntity<Long> {
     @Column(name = "fixed_rate_ms")
     private Long fixedRateInMilliseconds;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "retry_policy")
-    private String retryPolicy;
+    private RetryPolicyEnum retryPolicy;
 
     @JdbcTypeCode(SqlTypes.JSON)
     private JobDetailsPayload payload;
@@ -49,6 +51,21 @@ public class JobEntity extends BaseEntity<Long> {
 
     @Column(name = "next_run_at")
     private ZonedDateTime nextRunAt;
+
+    @Column(name = "max_retries")
+    private Integer maxRetries;
+
+    @Column(name = "retry_delay_in_seconds")
+    private Integer retryDelayInSeconds;
+
+    @Column(name = "exponential_base")
+    private Integer exponentialBase;
+
+    @Column(name = "exponential_initial_delay")
+    private Integer exponentialInitialDelayInSeconds;
+
+    @Column(name = "retries_attempted")
+    private Integer retriesAttempted;
 
     @Version
     private Integer version; // This field is used for optimistic locking

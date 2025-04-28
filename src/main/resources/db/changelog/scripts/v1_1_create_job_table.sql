@@ -11,6 +11,11 @@ CREATE TABLE IF NOT EXISTS jobschedulerservice.job
         payload JSONB,
         last_run_at TIMESTAMP WITH TIME ZONE,
         next_run_at TIMESTAMP WITH TIME ZONE,
+        max_retries INT,
+        retry_delay_in_seconds INT,
+        exponential_base INT,
+        exponential_initial_delay INT,
+        retries_attempted INT,
         version INT,
         created_by VARCHAR(40),
         created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -22,4 +27,6 @@ CREATE TABLE IF NOT EXISTS jobschedulerservice.job
 -- creation of index
 CREATE INDEX IF NOT EXISTS idx_job_name ON jobschedulerservice.job(name);
 CREATE INDEX IF NOT EXISTS idx_job_id ON jobschedulerservice.job(id);
+CREATE INDEX IF NOT EXISTS idx_job_status ON jobschedulerservice.job(status);
+CREATE INDEX IF NOT EXISTS idx_job_next_run_at ON jobschedulerservice.job(next_run_at);
 

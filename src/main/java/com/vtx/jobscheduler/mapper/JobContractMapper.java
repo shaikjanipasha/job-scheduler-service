@@ -16,7 +16,13 @@ public class JobContractMapper {
         jobEntity.setCronExpression(jobRequestContract.getCronExpression());
         jobEntity.setFixedRateInMilliseconds(jobRequestContract.getFixedRateInMilliSeconds());
         jobEntity.setRetryPolicy(jobRequestContract.getRetryPolicy());
+        jobEntity.setMaxRetries(jobRequestContract.getMaxRetries());
+        jobEntity.setRetryDelayInSeconds(jobRequestContract.getRetryDelayInSeconds());
+        jobEntity.setExponentialBase(jobRequestContract.getExponentialBase());
+        jobEntity.setExponentialInitialDelayInSeconds(jobRequestContract.getExponentialInitialDelayInSeconds());
+        jobEntity.setRetriesAttempted(jobRequestContract.getRetriesAttempted());
         jobEntity.setPayload(jobRequestContract.getPayload());
+
         if (null != jobRequestContract.getStatus()) {
             jobEntity.setStatus(jobRequestContract.getStatus());
         } else {
@@ -33,6 +39,12 @@ public class JobContractMapper {
         jobResponseContract.setStatus(jobEntity.getStatus());
         jobResponseContract.setCronExpression(jobEntity.getCronExpression());
         jobResponseContract.setFixedRateInMilliSeconds(jobEntity.getFixedRateInMilliseconds());
+        jobResponseContract.setRetryPolicy(jobEntity.getRetryPolicy());
+        jobResponseContract.setMaxRetries(jobEntity.getMaxRetries());
+        jobResponseContract.setRetryDelayInSeconds(jobEntity.getRetryDelayInSeconds());
+        jobResponseContract.setExponentialBase(jobEntity.getExponentialBase());
+        jobResponseContract.setExponentialInitialDelayInSeconds(jobEntity.getExponentialInitialDelayInSeconds());
+        jobResponseContract.setRetriesAttempted(jobEntity.getRetriesAttempted());
         jobResponseContract.setPayload(jobEntity.getPayload());
         jobResponseContract.setLastRunAt(jobEntity.getLastRunAt());
         jobResponseContract.setNextRunAt(jobEntity.getNextRunAt());

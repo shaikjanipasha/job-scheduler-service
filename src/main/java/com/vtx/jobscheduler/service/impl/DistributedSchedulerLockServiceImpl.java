@@ -5,6 +5,8 @@ import com.vtx.jobscheduler.repository.DistributedSchedulerLockRepository;
 import com.vtx.jobscheduler.service.DistributedSchedulerLockService;
 import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +21,7 @@ public class DistributedSchedulerLockServiceImpl implements DistributedScheduler
     @Value("${scheduler.lock.expiryTimeInMinutes:30}")
     private Long lockExpiryTime;
 
-    private String LOCK_KEY_PREFIX = "scheduler:lock:";
+    private String LOCK_KEY_PREFIX = "distributed_scheduler_lock::";
 
     private final DistributedSchedulerLockRepository lockRepository;
 
@@ -27,23 +29,36 @@ public class DistributedSchedulerLockServiceImpl implements DistributedScheduler
     @Transactional
     public boolean tryAcquireLock(String lockName) {
         String lockKey = LOCK_KEY_PREFIX + lockName;
-        DistributedSchedulerLockEntity lockEntity = lockRepository.findByLockKey(lockKey);
-        if (lockEntity == null) {
-            lockEntity = buildAndGetDistributedSchedulerLockEntity(lockKey);
-            lockRepository.save(lockEntity);
+        Optional<DistributedSchedulerLockEntity> optExistingLockEntity = lockRepository.findLockByKeyForUpdate(lockKey);
+
+        if (optExistingLockEntity.isEmpty()) {
+            lockRepository.save(buildAndGetDistributedSchedulerLockEntity(lockKey));
             return true;
         }
 
-        // Note: Lock is held but expired, so we can reacquire it
-        if (lockEntity.isLocked() && lockEntity.getExpiryTime().isBefore(ZonedDateTime.now())) {
-            lockEntity.setLocked(true); // Reacquire the lock
-            lockEntity.setLockTime(ZonedDateTime.now());
-            lockEntity.setExpiryTime(ZonedDateTime.now().plusMinutes(lockExpiryTime)); // Reset expiry time
-            lockEntity.setLastHeartbeatTime(ZonedDateTime.now());
-            lockRepository.save(lockEntity);
+        ZonedDateTime now = ZonedDateTime.now();
+        DistributedSchedulerLockEntity existingLockEntity = optExistingLockEntity.get();
+
+        if (!existingLockEntity.isLocked()) {
+            // Lock is free
+            existingLockEntity.setLocked(true);
+            existingLockEntity.setLockTime(now);
+            existingLockEntity.setExpiryTime(now.plusMinutes(lockExpiryTime));
+            existingLockEntity.setLastHeartbeatTime(now);
+            lockRepository.save(existingLockEntity);
             return true;
         }
 
+        if (existingLockEntity.getExpiryTime() != null && existingLockEntity.getExpiryTime().isBefore(now)) {
+            // Lock is expired, reacquire it
+            existingLockEntity.setLocked(true);
+            existingLockEntity.setLockTime(now);
+            existingLockEntity.setExpiryTime(now.plusMinutes(lockExpiryTime));
+            existingLockEntity.setLastHeartbeatTime(now);
+            lockRepository.save(existingLockEntity);
+            return true;
+        }
+        // Lock is currently held and not expired
         log.info("Lock is already acquired by another process: {}", lockKey);
         return false;
     }
@@ -52,8 +67,10 @@ public class DistributedSchedulerLockServiceImpl implements DistributedScheduler
     @Transactional
     public void releaseLock(String lockName) {
         String lockKey = LOCK_KEY_PREFIX + lockName;
-        DistributedSchedulerLockEntity lockEntity = lockRepository.findByLockKey(lockKey);
-        if (lockEntity != null) {
+        Optional<DistributedSchedulerLockEntity> optLockEntity = lockRepository.findLockByKeyForUpdate(lockKey);
+
+        if (optLockEntity.isPresent()) {
+            DistributedSchedulerLockEntity lockEntity = optLockEntity.get();
             if (lockEntity.isLocked()) {
                 lockEntity.setLocked(false);
                 lockEntity.setLockTime(null);

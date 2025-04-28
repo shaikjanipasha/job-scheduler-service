@@ -1,4 +1,7 @@
-package com.vtx.jobscheduler.config;
+package com.vtx.jobscheduler.security;
+
+import static com.vtx.jobscheduler.routes.Routes.API_V1_JOBS;
+import static com.vtx.jobscheduler.routes.Routes.ROUTE_USER;
 
 import com.vtx.jobscheduler.filter.JwtAuthFilter;
 import com.vtx.jobscheduler.service.impl.UserServiceImpl;
@@ -22,10 +25,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    // This class is used to enable method-level security annotations
-    // such as @PreAuthorize, @PostAuthorize, @Secured, etc.
-    // You can customize the security configuration here if needed.
-
     private final JwtAuthFilter jwtAuthFilter;
     private final UserServiceImpl userDetailsService;
 
@@ -35,17 +34,22 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/user/**",
+                                ROUTE_USER + "/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
-                        .requestMatchers("/api/v1/jobs/**").authenticated()
+                        .requestMatchers(API_V1_JOBS + "/**").authenticated()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
