@@ -38,7 +38,7 @@ spring:
                     batch_size: 10
                 hbm2ddl:
                     auto: none
-                show_sql: true
+                show_sql: false
     liquibase:
         enabled: true
         contexts: dev
@@ -56,9 +56,6 @@ scheduler:
     lock:
         expiryTimeInMinutes: 30
 
-
 logging:
     pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg [jobId:%X{jobId} jobName:%X{jobName}]"
-
-
+        level: "%5p [traceId=%X{traceId}, spanId=%X{spanId}]"
