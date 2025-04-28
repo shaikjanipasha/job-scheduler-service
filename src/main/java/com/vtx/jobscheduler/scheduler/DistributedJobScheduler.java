@@ -43,15 +43,18 @@ public class DistributedJobScheduler {
                     if (distributedSchedulerLockService.tryAcquireLock(
                             DISTRIBUTED_JOB_SCHEDULER_LOCK + job.getName())) {
                         log.info(lockName + " Acquired lock for job: {}", job.getName());
+                        MDC.put("jobId", job.getId().toString());
+                        MDC.put("jobName", job.getName());
                         processJob(job);
                     } else {
                         log.info(lockName + " Another instance is already processing job: {}", job.getName());
                     }
                     distributedSchedulerLockService.releaseLock(lockName);
                 }
-            MDC.clear();
             } catch (Exception e) {
             log.error("DistributedJobSchedulerService Error occurred while processing jobs: {}", e.getMessage(), e);
+        } finally {
+            MDC.clear();
         }
         log.info("End --> DistributedJobSchedulerService end at: {} ", System.currentTimeMillis());
     }

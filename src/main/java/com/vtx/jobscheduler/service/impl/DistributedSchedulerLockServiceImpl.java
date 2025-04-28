@@ -19,7 +19,7 @@ public class DistributedSchedulerLockServiceImpl implements DistributedScheduler
     @Value("${scheduler.lock.expiryTimeInMinutes:30}")
     private Long lockExpiryTime;
 
-    private String LOCK_KEY_PREFIX = "scheduler:lock:";
+    private String LOCK_KEY_PREFIX = "distributed_scheduler_lock::";
 
     private final DistributedSchedulerLockRepository lockRepository;
 
@@ -28,22 +28,35 @@ public class DistributedSchedulerLockServiceImpl implements DistributedScheduler
     public boolean tryAcquireLock(String lockName) {
         String lockKey = LOCK_KEY_PREFIX + lockName;
         DistributedSchedulerLockEntity lockEntity = lockRepository.findByLockKey(lockKey);
+
         if (lockEntity == null) {
             lockEntity = buildAndGetDistributedSchedulerLockEntity(lockKey);
             lockRepository.save(lockEntity);
             return true;
         }
 
-        // Note: Lock is held but expired, so we can reacquire it
-        if (lockEntity.isLocked() && lockEntity.getExpiryTime().isBefore(ZonedDateTime.now())) {
-            lockEntity.setLocked(true); // Reacquire the lock
-            lockEntity.setLockTime(ZonedDateTime.now());
-            lockEntity.setExpiryTime(ZonedDateTime.now().plusMinutes(lockExpiryTime)); // Reset expiry time
-            lockEntity.setLastHeartbeatTime(ZonedDateTime.now());
+        ZonedDateTime now = ZonedDateTime.now();
+
+        if (!lockEntity.isLocked()) {
+            // Lock is free
+            lockEntity.setLocked(true);
+            lockEntity.setLockTime(now);
+            lockEntity.setExpiryTime(now.plusMinutes(lockExpiryTime));
+            lockEntity.setLastHeartbeatTime(now);
             lockRepository.save(lockEntity);
             return true;
         }
 
+        if (lockEntity.getExpiryTime() != null && lockEntity.getExpiryTime().isBefore(now)) {
+            // Lock is expired, reacquire it
+            lockEntity.setLocked(true);
+            lockEntity.setLockTime(now);
+            lockEntity.setExpiryTime(now.plusMinutes(lockExpiryTime));
+            lockEntity.setLastHeartbeatTime(now);
+            lockRepository.save(lockEntity);
+            return true;
+        }
+        // Lock is currently held and not expired
         log.info("Lock is already acquired by another process: {}", lockKey);
         return false;
     }

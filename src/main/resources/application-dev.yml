@@ -58,4 +58,4 @@ scheduler:
 
 logging:
     pattern:
-        level: "%5p [traceId=%X{traceId}, spanId=%X{spanId}]"
+        level: "%5p [traceId=%X{traceId}, spanId=%X{spanId}]%replace([jobId=%X{jobId}, jobName=%X{jobName}]){'\\[jobId=, jobName=\\]', ''}"
