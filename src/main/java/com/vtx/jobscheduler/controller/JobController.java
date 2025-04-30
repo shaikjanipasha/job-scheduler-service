@@ -1,7 +1,10 @@
 package com.vtx.jobscheduler.controller;
 
 import static com.vtx.jobscheduler.constants.Constants.BEARER_AUTH;
-import static com.vtx.jobscheduler.routes.Routes.*;
+import static com.vtx.jobscheduler.routes.Routes.API_V1_JOBS;
+import static com.vtx.jobscheduler.routes.Routes.JOBS_BY_ID;
+import static com.vtx.jobscheduler.routes.Routes.JOBS_BY_JOB_NAME;
+import static com.vtx.jobscheduler.routes.Routes.JOBS_CREATE;
 
 import com.vtx.jobscheduler.model.JobPatchRequestContract;
 import com.vtx.jobscheduler.model.JobRequestContract;
@@ -16,7 +19,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(API_V1_JOBS)

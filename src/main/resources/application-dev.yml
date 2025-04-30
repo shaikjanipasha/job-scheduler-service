@@ -55,4 +55,3 @@ scheduler:
     initialDelay: 10000
     lock:
         expiryTimeInMinutes: 30
-
