@@ -79,6 +79,10 @@ Open the Windows PowerShell as an administrator and run the following command:
 8. **Access the Application**: Open your browser and navigate to `http://localhost:8083/swagger-ui/index.html` to access the Swagger UI for API documentation and testing.
      Refer "\job-scheduler-service\src\test\samplepayloads" this location in the repo for sample payloads
 
+Note: liquibase will create the tables automatically in the database. 
+Along with application tables it will create two extra tables namely "databasechangelog" and "databasechangeloglock" for tracking the changes in the database.
+
+
  
 
 
