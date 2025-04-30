@@ -1,0 +1,24 @@
+{
+  "name": "FixedRateJob",
+  "status": "CREATED",
+  "scheduleType": "FIXED_RATE",
+  "fixedRateInMilliSeconds": 300000,
+  "retryPolicy": "FIXED",
+  "payload": {
+    "action": "string",
+    "params": {
+      "additionalProp1": {},
+      "additionalProp2": {},
+      "additionalProp3": {}
+    },
+    "contexts": {
+      "additionalProp1": {},
+      "additionalProp2": {},
+      "additionalProp3": {}
+    }
+  },
+  "maxRetries": 3,
+  "retryDelayInSeconds": 3,
+  "exponentialBase": 0,
+  "exponentialInitialDelayInSeconds": 0
+}

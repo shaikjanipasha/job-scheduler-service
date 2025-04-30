@@ -20,6 +20,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.support.CronExpression;
@@ -29,6 +30,7 @@ import static com.vtx.jobscheduler.constants.Constants.SYSTEM_USER;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JobServiceImpl implements JobService {
 
     private final Validator validator;
@@ -97,7 +99,10 @@ public class JobServiceImpl implements JobService {
         if (scheduleType == ScheduleTypeEnum.CRON) {
             CronExpression cronExpressionResult = CronExpression.parse(cronExpression);
             ZonedDateTime now = ZonedDateTime.now();
-            return cronExpressionResult.next(now);
+            log.info("current time: " + now);
+            ZonedDateTime cronNextRun = cronExpressionResult.next(now);
+            log.info("cron next run: " + cronNextRun);
+            return cronNextRun;
         } else if (scheduleType == ScheduleTypeEnum.FIXED_RATE) {
             return ZonedDateTime.now().plus(Duration.ofMillis(fixedRateInMilliSeconds));
         }
@@ -136,6 +141,22 @@ public class JobServiceImpl implements JobService {
     @Override
     public Page<JobResponseContract> getAllJobs(Pageable pageable) {
         return jobRepository.findAll(pageable).map(jobContractMapper::translateToJobResponseContract);
+    }
+
+    @Override
+    public void deleteJob(String jobName) {
+        JobEntity jobEntity = jobRepository.findByName(jobName)
+                .orElseThrow(() -> new JobNotFoundException(String
+                        .format("The given JobName %s is not found in the system. Please verify the JobName", jobName)));
+        jobRepository.delete(jobEntity);
+    }
+
+    @Override
+    public void deleteJob(Long jobId) {
+        JobEntity jobEntity = jobRepository.findById(jobId)
+                .orElseThrow(() -> new JobNotFoundException(String
+                        .format("The given JobId %d is not found in the system. Please verify the JobId", jobId)));
+        jobRepository.delete(jobEntity);
     }
 
 }

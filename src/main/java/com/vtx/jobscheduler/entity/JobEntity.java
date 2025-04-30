@@ -65,7 +65,7 @@ public class JobEntity extends BaseEntity<Long> {
     private Integer exponentialInitialDelayInSeconds;
 
     @Column(name = "retries_attempted")
-    private Integer retriesAttempted;
+    private Integer retriesAttempted = 0;
 
     @Version
     private Integer version; // This field is used for optimistic locking
