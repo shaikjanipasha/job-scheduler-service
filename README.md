@@ -42,7 +42,7 @@ A robust, extensible, and production-ready Job Scheduler Service built using Jav
     ./run.sh
 2. **Application Access**:
   - Swagger UI: Open your browser and navigate to `http://localhost:8083/swagger-ui/index.html` to access the Swagger UI for API documentation and testing.
-Refer "\job-scheduler-service\src\test\samplepayloads" this location in the repo for sample payloads
+    Refer "\job-scheduler-service\src\test\samplepayloads" this location in the repo for sample payloads
 
 ####
 **Approach-2**: To get your job-scheduler-service up and running with Rancher Desktop, follow the steps below:
@@ -61,7 +61,6 @@ Open the Windows PowerShell as an administrator and run the following command:
   5) Now, install the Rancher Desktop and verify with command on powershell
      - docker --version
 3. **Install Git**: Download and install Git from the [official website](https://git-scm.com/downloads).
-
 4. **Clone the Repository**: Clone the repository to your local machine using Git, and navigate to the project directory and execute the below command
    bash ./run.sh
     (or)
