@@ -36,7 +36,8 @@ public class DistributedJobScheduler {
         log.info("Start --> DistributedJobSchedulerService started at: {} ", System.currentTimeMillis());
 
         try {
-                List<String> statuses = List.of(JobStatusEnum.CREATED.getValue(), JobStatusEnum.SCHEDULED.getValue());
+                List<String> statuses = List.of(JobStatusEnum.CREATED.getValue(), JobStatusEnum.SCHEDULED.getValue(),
+                        JobStatusEnum.RESUMED.getValue());
                 List<JobEntity> jobsToProcess = jobService.findJobsToProcess(statuses, ZonedDateTime.now());
                 if (jobsToProcess.isEmpty()) {
                     log.warn("No jobs to process");
@@ -50,7 +51,6 @@ public class DistributedJobScheduler {
                         try {
                             MDC.put("jobId", job.getId().toString());
                             MDC.put("jobName", job.getName());
-
                             log.info("Executing job: {}", job.getName());
                             jobExecutorFactory.getExecutor(job.getName()).execute(job);
 

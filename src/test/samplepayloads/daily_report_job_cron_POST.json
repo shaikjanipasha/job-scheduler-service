@@ -1,0 +1,25 @@
+{
+  "name": "DailyReportJob",
+  "status": "CREATED",
+  "scheduleType": "CRON",
+  "cronExpression": "0 */10 * * * *",
+  "fixedRateInMilliSeconds": 0,
+  "retryPolicy": "FIXED",
+  "payload": {
+    "action": "string",
+    "params": {
+      "additionalProp1": {},
+      "additionalProp2": {},
+      "additionalProp3": {}
+    },
+    "contexts": {
+      "additionalProp1": {},
+      "additionalProp2": {},
+      "additionalProp3": {}
+    }
+  },
+  "maxRetries": 3,
+  "retryDelayInSeconds": 3,
+  "exponentialBase": 0,
+  "exponentialInitialDelayInSeconds": 0
+}

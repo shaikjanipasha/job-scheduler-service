@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,6 +76,22 @@ public class JobController {
             @ParameterObject Pageable pageable) {
         Page<JobResponseContract> jobs = jobService.getAllJobs(pageable);
         return ResponseEntity.ok(jobs);
+    }
+
+    @DeleteMapping(JOBS_BY_JOB_NAME)
+    @Operation(summary = "Delete job by JobName", security = @SecurityRequirement(name = BEARER_AUTH),
+            description = "Delete job by JobName")
+    public ResponseEntity<String> deleteJob(@PathVariable String jobName) {
+        jobService.deleteJob(jobName);
+        return ResponseEntity.ok("Job " + jobName +  " deleted successfully.");
+    }
+
+    @DeleteMapping(JOBS_BY_ID)
+    @Operation(summary = "Delete job by JobId", security = @SecurityRequirement(name = BEARER_AUTH),
+            description = "Delete job by JobId")
+    public ResponseEntity<String> deleteJobById(@PathVariable Long jobId) {
+        jobService.deleteJob(jobId);
+        return ResponseEntity.ok("Job " + jobId +  " deleted successfully.");
     }
 
 }

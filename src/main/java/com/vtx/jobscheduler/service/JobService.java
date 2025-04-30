@@ -26,4 +26,8 @@ public interface JobService {
                                               Long fixedRateInMilliSeconds);
     JobResponseContract patchJob(Long jobId, JobPatchRequestContract patchRequest);
     Page<JobResponseContract> getAllJobs(Pageable pageable);
+
+    void deleteJob(String jobName);
+
+    void deleteJob(Long jobId);
 }

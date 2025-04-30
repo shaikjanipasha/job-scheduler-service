@@ -34,6 +34,4 @@ public class Contract {
 
     private Integer exponentialInitialDelayInSeconds = 3;
 
-    private Integer retriesAttempted = 0;
-
 }
