@@ -13,8 +13,12 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +30,8 @@ import static com.vtx.jobscheduler.constants.Constants.SYSTEM_USER;
 @Service
 @RequiredArgsConstructor
 public class JobServiceImpl implements JobService {
+
+    private final Validator validator;
 
     private final JobRepository jobRepository;
 
@@ -40,7 +46,7 @@ public class JobServiceImpl implements JobService {
             return jobContractMapper.translateToJobResponseContract(optJobEntity.get());
         }
 
-        ZonedDateTime nextRunAt = calculateNextRun(jobRequestContract.getScheduleType(),
+        ZonedDateTime nextRunAt = computeNextRunForJob(jobRequestContract.getScheduleType(),
                 jobRequestContract.getCronExpression(), jobRequestContract.getFixedRateInMilliSeconds());
         if (nextRunAt == null) {
             throw new RuntimeException("Invalid schedule type or cron expression");
@@ -86,8 +92,8 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public ZonedDateTime calculateNextRun(ScheduleTypeEnum scheduleType, String cronExpression,
-                                          Long fixedRateInMilliSeconds) {
+    public ZonedDateTime computeNextRunForJob(ScheduleTypeEnum scheduleType, String cronExpression,
+                                              Long fixedRateInMilliSeconds) {
         if (scheduleType == ScheduleTypeEnum.CRON) {
             CronExpression cronExpressionResult = CronExpression.parse(cronExpression);
             ZonedDateTime now = ZonedDateTime.now();
@@ -100,7 +106,6 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public JobResponseContract patchJob(Long jobId, JobPatchRequestContract patchRequest) {
-        // ToDo:: Validate Patch Request and handle mapping errors and return the result
         Optional<JobEntity> optJobEntity = jobRepository.findById(jobId);
         if (optJobEntity.isEmpty()) {
             throw new JobNotFoundException(String
@@ -108,15 +113,26 @@ public class JobServiceImpl implements JobService {
         }
 
         JobEntity existingJobEntity = optJobEntity.get();
-        jobContractMapper.mapPatchRequestToExistingJobEntity(existingJobEntity, patchRequest);
-        // now need validation on existing jobEntity :: ToDo::
-        ZonedDateTime nextRunAt = calculateNextRun(existingJobEntity.getScheduleType(),
+        JobPatchRequestContract mergedPatchRequest = jobContractMapper.mapMergePatchWithExistingJobEntity(
+                existingJobEntity, patchRequest);
+
+        Set<ConstraintViolation<JobPatchRequestContract>> violations = validator.validate(mergedPatchRequest);
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
+        jobContractMapper.mapAndApplyPatchToExistingJobEntity(mergedPatchRequest, existingJobEntity);
+        ZonedDateTime nextRunAt = computeNextRunForJob(existingJobEntity.getScheduleType(),
                 existingJobEntity.getCronExpression(), existingJobEntity.getFixedRateInMilliseconds());
         if (nextRunAt == null) {
-            throw new RuntimeException("Invalid schedule type or cron expression");
+            throw new RuntimeException("Invalid Cron Expression for ScheduleType " +
+                    existingJobEntity.getCronExpression() + "   " + existingJobEntity.getScheduleType());
         }
-        return null;
+        jobRepository.save(existingJobEntity);
+        return jobContractMapper.translateToJobResponseContract(existingJobEntity);
     }
+
     @Override
     public Page<JobResponseContract> getAllJobs(Pageable pageable) {
         return jobRepository.findAll(pageable).map(jobContractMapper::translateToJobResponseContract);

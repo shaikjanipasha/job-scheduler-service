@@ -22,8 +22,8 @@ public interface JobService {
 
     void updateJob(JobEntity jobEntity);
 
-    public ZonedDateTime calculateNextRun(ScheduleTypeEnum scheduleType, String cronExpression,
-                                          Long fixedRateInMilliSeconds);
+    public ZonedDateTime computeNextRunForJob(ScheduleTypeEnum scheduleType, String cronExpression,
+                                              Long fixedRateInMilliSeconds);
     JobResponseContract patchJob(Long jobId, JobPatchRequestContract patchRequest);
     Page<JobResponseContract> getAllJobs(Pageable pageable);
 }

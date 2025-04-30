@@ -52,7 +52,7 @@ public class DistributedJobScheduler {
                             jobExecutorFactory.getExecutor(job.getName()).execute(job);
 
                             job.setStatus(JobStatusEnum.SCHEDULED);
-                            job.setNextRunAt(jobService.calculateNextRun(job.getScheduleType(), job.getCronExpression(),
+                            job.setNextRunAt(jobService.computeNextRunForJob(job.getScheduleType(), job.getCronExpression(),
                                     job.getFixedRateInMilliseconds()));
                             job.setRetriesAttempted(0);
                         } catch (Exception e) {

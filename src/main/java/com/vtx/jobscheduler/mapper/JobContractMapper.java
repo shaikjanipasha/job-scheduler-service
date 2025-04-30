@@ -7,8 +7,6 @@ import com.vtx.jobscheduler.model.JobRequestContract;
 import com.vtx.jobscheduler.model.JobResponseContract;
 import org.springframework.stereotype.Component;
 
-import java.time.ZonedDateTime;
-
 @Component
 public class JobContractMapper {
 
@@ -58,44 +56,88 @@ public class JobContractMapper {
         return jobResponseContract;
     }
 
-    public void mapPatchRequestToExistingJobEntity(JobEntity existingJobEntity,JobPatchRequestContract patchRequest) {
+    public JobPatchRequestContract mapMergePatchWithExistingJobEntity(JobEntity existingJobEntity,
+                                                                       JobPatchRequestContract patchRequest) {
+        // Note: this mapping is needed to perfom the valiadation on mergedPatchRequest before saving.
+        JobPatchRequestContract mergedPatchRequest = new JobPatchRequestContract();
 
-        if (patchRequest.getStatus() == null) {
-            throw new IllegalArgumentException("status must be provided to patch a job");
-        }
-        existingJobEntity.setStatus(patchRequest.getStatus());
+        mergedPatchRequest.setName(patchRequest.getName() != null
+                ? patchRequest.getName() : existingJobEntity.getName());
 
-        if (patchRequest.getScheduleType() != null) {
-            existingJobEntity.setScheduleType(patchRequest.getScheduleType());
-        }
-        if (patchRequest.getCronExpression() != null) {
-            existingJobEntity.setCronExpression(patchRequest.getCronExpression());
-        }
-        if (patchRequest.getFixedRateInMilliSeconds() != null) {
-            existingJobEntity.setFixedRateInMilliseconds(patchRequest.getFixedRateInMilliSeconds());
-        }
-        if (patchRequest.getRetryPolicy() != null) {
-            existingJobEntity.setRetryPolicy(patchRequest.getRetryPolicy());
-        }
-        if (patchRequest.getMaxRetries() != null) {
-            existingJobEntity.setMaxRetries(patchRequest.getMaxRetries());
-        }
-        if (patchRequest.getRetryDelayInSeconds() != null) {
-            existingJobEntity.setRetryDelayInSeconds(patchRequest.getRetryDelayInSeconds());
-        }
-        if (patchRequest.getExponentialBase() != null) {
-            existingJobEntity.setExponentialBase(patchRequest.getExponentialBase());
-        }
-        if (patchRequest.getExponentialInitialDelayInSeconds() != null) {
-            existingJobEntity.setExponentialInitialDelayInSeconds(patchRequest.getExponentialInitialDelayInSeconds());
-        }
-        if (patchRequest.getRetriesAttempted() != null) {
-            existingJobEntity.setRetriesAttempted(patchRequest.getRetriesAttempted());
-        }
-        if (patchRequest.getPayload() != null) {
-            existingJobEntity.setPayload(patchRequest.getPayload());
-        }
-        existingJobEntity.setUpdatedAt(ZonedDateTime.now());
-        existingJobEntity.setUpdatedBy(existingJobEntity.getUpdatedBy());
+        mergedPatchRequest.setStatus(patchRequest.getStatus() != null
+                ? patchRequest.getStatus() : existingJobEntity.getStatus());
+
+        mergedPatchRequest.setScheduleType(patchRequest.getScheduleType() != null
+                ? patchRequest.getScheduleType() : existingJobEntity.getScheduleType());
+
+        mergedPatchRequest.setCronExpression(patchRequest.getCronExpression() != null
+                ? patchRequest.getCronExpression() : existingJobEntity.getCronExpression());
+
+        mergedPatchRequest.setFixedRateInMilliSeconds(patchRequest.getFixedRateInMilliSeconds() != null
+                ? patchRequest.getFixedRateInMilliSeconds() : existingJobEntity.getFixedRateInMilliseconds());
+
+        mergedPatchRequest.setRetryPolicy(patchRequest.getRetryPolicy() != null
+                ? patchRequest.getRetryPolicy() : existingJobEntity.getRetryPolicy());
+
+        mergedPatchRequest.setMaxRetries(patchRequest.getMaxRetries() != null
+                ? patchRequest.getMaxRetries() : existingJobEntity.getMaxRetries());
+
+        mergedPatchRequest.setRetryDelayInSeconds(patchRequest.getRetryDelayInSeconds() != null
+                ? patchRequest.getRetryDelayInSeconds() : existingJobEntity.getRetryDelayInSeconds());
+
+        mergedPatchRequest.setExponentialBase(patchRequest.getExponentialBase() != null
+                ? patchRequest.getExponentialBase() : existingJobEntity.getExponentialBase());
+
+        mergedPatchRequest.setExponentialInitialDelayInSeconds(patchRequest.getExponentialInitialDelayInSeconds() != null
+                ? patchRequest.getExponentialInitialDelayInSeconds() : existingJobEntity.getExponentialInitialDelayInSeconds());
+
+        mergedPatchRequest.setPayload(patchRequest.getPayload() != null
+                ? patchRequest.getPayload() : existingJobEntity.getPayload());
+
+        return mergedPatchRequest;
     }
+
+    public void mapAndApplyPatchToExistingJobEntity(JobPatchRequestContract mergedPatchRequest,
+                                                    JobEntity existingEntity) {
+        if (mergedPatchRequest.getName() != null) {
+            existingEntity.setName(mergedPatchRequest.getName());
+        }
+
+        if (mergedPatchRequest.getStatus() != null) {
+            existingEntity.setStatus(mergedPatchRequest.getStatus());
+        }
+
+        if (mergedPatchRequest.getScheduleType() != null) {
+            existingEntity.setScheduleType(mergedPatchRequest.getScheduleType());
+        }
+
+        if (mergedPatchRequest.getCronExpression() != null) {
+            existingEntity.setCronExpression(mergedPatchRequest.getCronExpression());
+        }
+        if (mergedPatchRequest.getFixedRateInMilliSeconds() != null) {
+            existingEntity.setFixedRateInMilliseconds(mergedPatchRequest.getFixedRateInMilliSeconds());
+        }
+        if (mergedPatchRequest.getRetryPolicy() != null) {
+            existingEntity.setRetryPolicy(mergedPatchRequest.getRetryPolicy());
+        }
+        if (mergedPatchRequest.getMaxRetries() != null) {
+            existingEntity.setMaxRetries(mergedPatchRequest.getMaxRetries());
+        }
+        if (mergedPatchRequest.getRetryDelayInSeconds() != null) {
+            existingEntity.setRetryDelayInSeconds(mergedPatchRequest.getRetryDelayInSeconds());
+        }
+        if (mergedPatchRequest.getExponentialBase() != null) {
+            existingEntity.setExponentialBase(mergedPatchRequest.getExponentialBase());
+        }
+        if (mergedPatchRequest.getExponentialInitialDelayInSeconds() != null) {
+            existingEntity.setExponentialInitialDelayInSeconds(mergedPatchRequest.getExponentialInitialDelayInSeconds());
+        }
+        if (mergedPatchRequest.getPayload() != null) {
+            existingEntity.setPayload(mergedPatchRequest.getPayload());
+        }
+        if (mergedPatchRequest.getStatus() != null) {
+            existingEntity.setStatus(mergedPatchRequest.getStatus());
+        }
+    }
+
 }

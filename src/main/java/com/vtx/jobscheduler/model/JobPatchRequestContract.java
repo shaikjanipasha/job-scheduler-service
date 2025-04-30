@@ -1,9 +1,9 @@
 package com.vtx.jobscheduler.model;
 
+import com.vtx.jobscheduler.annotation.ValidJobContract;
 import com.vtx.jobscheduler.enums.JobStatusEnum;
 import com.vtx.jobscheduler.enums.RetryPolicyEnum;
 import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ValidJobContract
 public class JobPatchRequestContract {
 
-    @NotNull(message = "status should not be null")
+    private String name;
     private JobStatusEnum status;
-
     private ScheduleTypeEnum scheduleType;
     private String cronExpression;
     private Long fixedRateInMilliSeconds;
@@ -27,5 +27,4 @@ public class JobPatchRequestContract {
     private Integer retryDelayInSeconds;
     private Integer exponentialBase;
     private Integer exponentialInitialDelayInSeconds;
-    private Integer retriesAttempted;
 }
