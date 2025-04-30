@@ -5,16 +5,17 @@
   "fixedRateInMilliSeconds": 300000,
   "retryPolicy": "FIXED",
   "payload": {
-    "action": "string",
+    "action": "GENERATE_DAILY_REPORT_FIXED_RATE",
     "params": {
-      "additionalProp1": {},
-      "additionalProp2": {},
-      "additionalProp3": {}
+      "reportType": "SALES",
+      "date": "2025-04-30",
+      "region": "NorthAmerica",
+      "includeSummary": true
     },
     "contexts": {
-      "additionalProp1": {},
-      "additionalProp2": {},
-      "additionalProp3": {}
+      "triggeredBy": "scheduler",
+      "requestId": "req-789xyz",
+      "initiatedBy": "automated-system"
     }
   },
   "maxRetries": 3,

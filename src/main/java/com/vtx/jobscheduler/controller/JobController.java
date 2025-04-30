@@ -64,7 +64,7 @@ public class JobController {
     @PatchMapping(JOBS_BY_ID)
     public ResponseEntity<JobResponseContract> patchJob(
             @PathVariable Long jobId,
-            @Valid @RequestBody JobPatchRequestContract patchRequest) {
+            @RequestBody JobPatchRequestContract patchRequest) {
         JobResponseContract updatedJob = jobService.patchJob(jobId, patchRequest);
         return ResponseEntity.ok(updatedJob);
     }

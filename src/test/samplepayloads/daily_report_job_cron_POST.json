@@ -6,16 +6,14 @@
   "fixedRateInMilliSeconds": 0,
   "retryPolicy": "FIXED",
   "payload": {
-    "action": "string",
+    "action": "DAILY_REPORT",
     "params": {
-      "additionalProp1": {},
-      "additionalProp2": {},
-      "additionalProp3": {}
+      "invoiceId": 12345,
+      "currency": "USD"
     },
     "contexts": {
-      "additionalProp1": {},
-      "additionalProp2": {},
-      "additionalProp3": {}
+      "triggeredBy": "system",
+      "requestId": "abc-123-def-456"
     }
   },
   "maxRetries": 3,

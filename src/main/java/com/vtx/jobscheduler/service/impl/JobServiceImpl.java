@@ -7,6 +7,7 @@ import com.vtx.jobscheduler.enums.ScheduleTypeEnum;
 import com.vtx.jobscheduler.model.JobPatchRequestContract;
 import com.vtx.jobscheduler.model.JobRequestContract;
 import com.vtx.jobscheduler.model.JobResponseContract;
+import com.vtx.jobscheduler.model.ValidationError;
 import com.vtx.jobscheduler.repository.JobRepository;
 import com.vtx.jobscheduler.service.JobService;
 import java.time.Duration;
@@ -15,7 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.vtx.jobscheduler.validator.JobPatchValidator;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -24,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.support.CronExpression;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import static com.vtx.jobscheduler.constants.Constants.SYSTEM_USER;
@@ -38,6 +43,8 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepository;
 
     private final JobContractMapper jobContractMapper;
+
+    private final JobPatchValidator jobPatchValidator;
 
     @Override
     public JobResponseContract createJob(JobRequestContract jobRequestContract) {
@@ -57,8 +64,8 @@ public class JobServiceImpl implements JobService {
         jobEntity.setNextRunAt(nextRunAt);
         jobEntity.setCreatedAt(ZonedDateTime.now());
         jobEntity.setUpdatedAt(ZonedDateTime.now());
-        jobEntity.setCreatedBy(SYSTEM_USER); // TODO: replace with actual user
-        jobEntity.setUpdatedBy(SYSTEM_USER); // TODO: replace with actual user
+        jobEntity.setCreatedBy(SYSTEM_USER); // TODO: replace with actual user from token Authentication
+        jobEntity.setUpdatedBy(SYSTEM_USER); // TODO: replace with actual user from token Authentication
 
         JobEntity savedJobEntity = jobRepository.save(jobEntity);
         return jobContractMapper.translateToJobResponseContract(savedJobEntity);
@@ -120,11 +127,9 @@ public class JobServiceImpl implements JobService {
         JobEntity existingJobEntity = optJobEntity.get();
         JobPatchRequestContract mergedPatchRequest = jobContractMapper.mapMergePatchWithExistingJobEntity(
                 existingJobEntity, patchRequest);
-
-        Set<ConstraintViolation<JobPatchRequestContract>> violations = validator.validate(mergedPatchRequest);
-
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
+        ValidationError error = new ValidationError();
+        if (!jobPatchValidator.isValid(mergedPatchRequest, error)) {
+            throw new RuntimeException("Validation error: " + error.getErrorMessage());
         }
 
         jobContractMapper.mapAndApplyPatchToExistingJobEntity(mergedPatchRequest, existingJobEntity);
