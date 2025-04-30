@@ -1,5 +1,5 @@
 ## 🛠️ Job Scheduler Service
-A robust, extensible, and production-ready Job Scheduler Service built using Java, Spring Boot, and PostgreSQL — designed for distributed environments with dynamic job registration, observability, fault tolerance, and full audit logging.
+A robust, extensible, and production-ready Job Scheduler Service built using Java, Spring Boot, and PostgreSQL — designed for distributed environments with dynamic job registration, observability, fault tolerance.
 
 ## 🚀 Features
 - ✅ Dynamic Job Registration via REST APIs
@@ -35,9 +35,15 @@ A robust, extensible, and production-ready Job Scheduler Service built using Jav
 
 
 ## Installation
-**Approach-1**: To get your job-scheduler-service up and running with Rancher Desktop, follow the steps below:
+**Approach-1**: To get your job-scheduler-service up and running with docker and if you already have docker installed in your machine and cloned the repository then just execute the below command from the root directory of the project:
+     bash ./run.sh
+     (or)
+    ./run.sh
+
+####
+**Approach-2**: To get your job-scheduler-service up and running with Rancher Desktop, follow the steps below:
 1. **Install Rancher Desktop**: Download and install Rancher Desktop(containerd) from the [official website](https://rancherdesktop.io/).
-2. Reboot Your Machine: After installing Rancher Desktop, reboot your machine to ensure all changes take effect.
+2. **Reboot Your Machine**: After installing Rancher Desktop, reboot your machine to ensure all changes take effect.
 - Note: if you are encountering issues with respective to WLS2 the rancher installation, please follow the below steps:
 Open the Windows PowerShell as an administrator and run the following command:
   1) Check if WSL is Installed
@@ -52,19 +58,19 @@ Open the Windows PowerShell as an administrator and run the following command:
      - docker --version
 3. **Install Git**: Download and install Git from the [official website](https://git-scm.com/downloads).
 
-### Clone the Repository and Execute below command from the root directory of the project.
+4. **Clone the Repository and Execute below command from the root directory of the project**.
     bash ./run.sh
     (or)
     ./run.sh
 
-### Access the Application
+5. **Access the Application**
 - **Swagger UI**: Open your browser and navigate to `http://localhost:8083/swagger-ui/index.html` to access the Swagger UI for API documentation and testing.
      Refer "\job-scheduler-service\src\test\samplepayloads" this location in the repo for sample payloads
 
 ####
-**Approach-2**: To get your job-scheduler-service up and running with in local with manual setup, follow the steps below:
+**Approach-3**: To get your job-scheduler-service up and running with in local with manual setup, follow the steps below:
 1. **Install Java**: Ensure you have Java 21("21.0.4"). You can download it from the https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html. Post installation of Java 21.0.4 set the path in environment variables(user and system).
-2. **Install PostgreSQL**: Download and install PostgreSQL("16.8") from the https://www.enterprisedb.com/downloads/postgres-postgresql-downloads. During installation, set the password for the `postgres` user with password `admin`. Grant all privileges on the database to this user.
+2. **Install PostgreSQL**: Download and install PostgreSQL("16.8") from the https://www.enterprisedb.com/downloads/postgres-postgresql-downloads. During installation, set the password for the `postgres` user with password `admin`. 
 3. **Install Git**: Download and install Git from the [official website](https://git-scm.com/downloads). 
 4. **Install Gradle**: Download and install Gradle("8.7") from the [official website](https://gradle.org/install/). https://gradle.org/next-steps/?version=8.7&format=all. Post installation set the path in environment variables(user and system).
 5. **Clone the Repository**: Clone the repository to your local machine using Git
@@ -79,8 +85,7 @@ Open the Windows PowerShell as an administrator and run the following command:
 8. **Access the Application**: Open your browser and navigate to `http://localhost:8083/swagger-ui/index.html` to access the Swagger UI for API documentation and testing.
      Refer "\job-scheduler-service\src\test\samplepayloads" this location in the repo for sample payloads
 
- 
-
-
-
-
+**Note**: 
+1. liquibase will create the tables automatically in the database. 
+Along with application tables it will create two extra tables namely "databasechangelog" and "databasechangeloglock" for tracking the changes in the database.
+2. Make use of authorize button by keeping the generated JWT token in swagger ui, so subsequent requests will be authorized.
