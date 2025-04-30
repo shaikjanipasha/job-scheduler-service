@@ -92,3 +92,5 @@ Open the Windows PowerShell as an administrator and run the following command:
 1. liquibase will create the tables automatically in the database. 
 Along with application tables it will create two extra tables namely "databasechangelog" and "databasechangeloglock" for tracking the changes in the database.
 2. Make use of authorize button by keeping the generated JWT token in swagger ui, so subsequent requests will be authorized.
+3. When you are running the service in docker or rancher desktop and accessing via Swagger-UI, it will consider UTC time.
+4. You can postman as well to test the apis.

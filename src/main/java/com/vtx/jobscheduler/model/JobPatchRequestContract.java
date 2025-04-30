@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ValidJobContract
 public class JobPatchRequestContract {
 
     private String name;
