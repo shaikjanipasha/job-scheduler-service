@@ -19,6 +19,7 @@ A robust, extensible, and production-ready Job Scheduler Service built using Jav
    - Job execution routed to specific executors based on job name
    - Default executor handles unmatched jobs
    - To add new jobs, just implement the executor and register the job
+   - Idempotence of POST /jobs API to prevent duplicate job registrations
 
 - ⚖️ Concurrency Control
    - Ensures single execution across nodes using PostgreSQL FOR UPDATE row-level locking
