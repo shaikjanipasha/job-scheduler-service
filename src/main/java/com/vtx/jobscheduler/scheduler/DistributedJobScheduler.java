@@ -1,5 +1,11 @@
 package com.vtx.jobscheduler.scheduler;
 
+
+import static com.vtx.jobscheduler.constants.Constants.DISTRIBUTED_JOB_SCHEDULER_LOCK;
+import static com.vtx.jobscheduler.constants.Constants.EXPONENTIAL_BASE_DEFAULT;
+import static com.vtx.jobscheduler.constants.Constants.EXPONENTIAL_INITIAL_DELAY_IN_SECONDS_DEFAULT;
+import static com.vtx.jobscheduler.constants.Constants.RETRY_DELAY_IN_SECONDS_DEFAULT;
+
 import com.vtx.jobscheduler.entity.JobEntity;
 import com.vtx.jobscheduler.enums.JobStatusEnum;
 import com.vtx.jobscheduler.enums.RetryPolicyEnum;
@@ -13,9 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import static com.vtx.jobscheduler.constants.Constants.*;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class DistributedJobScheduler {
     private final DistributedSchedulerLockService distributedSchedulerLockService;
 
     @Scheduled(fixedRateString = "${scheduler.fixedRate:6000}",
-            initialDelayString = "${job.scheduler.initialDelay:5000}")
+            initialDelayString = "${scheduler.initialDelay:5000}")
     public void processJobs() {
         log.info("Start --> DistributedJobSchedulerService started at: {} ", System.currentTimeMillis());
 
@@ -52,8 +55,8 @@ public class DistributedJobScheduler {
                             jobExecutorFactory.getExecutor(job.getName()).execute(job);
 
                             job.setStatus(JobStatusEnum.SCHEDULED);
-                            job.setNextRunAt(jobService.calculateNextRun(job.getScheduleType(), job.getCronExpression(),
-                                    job.getFixedRateInMilliseconds()));
+                            job.setNextRunAt(jobService.computeNextRunForJob(job.getScheduleType(),
+                                    job.getCronExpression(), job.getFixedRateInMilliseconds()));
                             job.setRetriesAttempted(0);
                         } catch (Exception e) {
                             log.error("Error occurred while processing job {}: {}", job.getName(), e.getMessage(), e);

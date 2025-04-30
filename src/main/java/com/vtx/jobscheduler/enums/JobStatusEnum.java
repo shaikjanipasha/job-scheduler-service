@@ -8,6 +8,7 @@ public enum JobStatusEnum {
     FAILED("FAILED", "Job has failed"),
     COMPLETED("COMPLETED", "Job has completed"),
     PAUSED("PAUSED", "Job is paused"),
+    RESUMED("RESUMED", "Job has resumed"),
     CANCELLED("CANCELLED", "Job has been cancelled"),
     ERROR("ERROR", "Job has encountered an error");
 

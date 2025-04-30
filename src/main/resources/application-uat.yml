@@ -1,0 +1,28 @@
+# ===================================================================
+#  Spring Boot UAT Profile Configuration
+#  File: application-uat.yml
+#  Description:
+#    This file is intended for defining environment-specific settings
+#    used during User Acceptance Testing (UAT).
+#
+#    All properties defined here will override those in application.yml
+#    when the active profile is set to "uat".
+#
+#    To activate this profile:
+#      - Set SPRING_PROFILES_ACTIVE=uat
+#      - Or use --spring.profiles.active=uat at runtime
+#
+#  Recommended configuration sections to define here:
+#    - spring.datasource.*       : UAT database connection
+#    - spring.jpa.*              : Hibernate/JPA tuning for UAT
+#    - server.*                  : Server port, context path, etc.
+#    - logging.*                 : Logging level or file paths
+#    - custom.*                  : Any app-specific UAT settings
+# ===================================================================
+
+# Example (uncomment and customize as needed):
+# spring:
+#   datasource:
+#     url: jdbc:mysql://uat-db-host:3306/jobdb
+#     username: uat_user
+#     password: securePassword
